@@ -4,51 +4,58 @@ import TemperatureService from "./../services/temperatureService";
 import TopNavigation from "./TopNavigation";
 import Footer from "./Footer";
 import LatestReadings from "./charts/LatestReadings";
+import Filters from "./Filters";
+import IFilters from "../models/filters";
 
 import "./app.scss";
 
 export interface IAppState {
     data: any;
+    autoRefresh: boolean;
+    refreshIntervalId: any;
+    intervalThreshold: number;
 }
 
 export default class App extends React.Component<{}, IAppState> {
     public state = {
-        data: []
+        data: [],
+        autoRefresh: true,
+        refreshIntervalId: null,
+        intervalThreshold: 10000
     };
 
     public componentDidMount() {
         this.fetchData();
+
+        const refreshIntervalId = setInterval(
+            this.fetchData,
+            this.state.intervalThreshold
+        );
+
+        this.setState({ refreshIntervalId });
     }
 
     public render() {
+        const { data, autoRefresh, intervalThreshold } = this.state;
+
         return (
             <div className="app">
                 <TopNavigation />
                 <div className="main-content container-fluid">
                     <div className="row">
-                        <div className="col-lg-8">
+                        <div className="col-lg-8 offset-2">
                             <LatestReadings
-                                data={this.state.data}
+                                data={data}
                                 onRefresh={this.fetchData}
+                                autoRefresh={autoRefresh}
+                                intervalThreshold={intervalThreshold}
+                                onIntervalThresholdChange={
+                                    this.handleIntervalThresholdChange
+                                }
+                                onAutoRefreshToggle={
+                                    this.handleAutoRefreshToggle
+                                }
                             />
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="card mb-3">
-                                <div className="card-header">
-                                    <i className="fas fa-chart-pie" />
-                                    Pie Chart Example
-                                </div>
-                                <div className="card-body">
-                                    <canvas
-                                        id="myPieChart"
-                                        width="100%"
-                                        height="100"
-                                    />
-                                </div>
-                                <div className="card-footer small text-muted">
-                                    Updated yesterday at 11:59 PM
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,9 +64,32 @@ export default class App extends React.Component<{}, IAppState> {
         );
     }
 
-    private fetchData() {
+    private fetchData = () => {
         const data = TemperatureService.getAll().then(data =>
             this.setState({ data })
         );
+    }
+
+    private handleAutoRefreshToggle = () => {
+        const isAutoRefresh = this.state.autoRefresh;
+
+        if (isAutoRefresh) {
+            clearInterval(this.state.refreshIntervalId);
+
+            this.setState({ autoRefresh: false });
+        } else {
+            const refreshIntervalId = setInterval(
+                this.fetchData,
+                this.state.intervalThreshold
+            );
+
+            this.setState({ autoRefresh: true, refreshIntervalId });
+        }
+    }
+
+    private handleIntervalThresholdChange = (event: any) => {
+        const intervalThreshold = event.target.value;
+
+        this.setState({ intervalThreshold });
     }
 }

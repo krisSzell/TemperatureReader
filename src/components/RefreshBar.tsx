@@ -1,18 +1,27 @@
 import * as React from "react";
 
-export default class RefreshBar extends React.Component {
+interface IProps {
+    value: boolean;
+    onChange: () => void;
+}
+
+export default class RefreshBar extends React.Component<IProps> {
     public render() {
+        const { value, onChange } = this.props;
+
         return (
             <div className="refresh-bar">
-                <span>Auto Refresh</span>
-                <button
-                    type="button"
-                    className="btn btn-sm btn-toggle"
-                    data-toggle="button"
-                    aria-pressed="false"
-                >
-                    <div className="handle" />
-                </button>
+                <div className="refresh-bar-container">
+                    <input
+                        className="auto-refresh-checkbox"
+                        type="checkbox"
+                        checked={value}
+                        onChange={onChange}
+                    />
+                    <label className="auto-refresh-label form-check-label">
+                        Auto Refresh
+                    </label>
+                </div>
             </div>
         );
     }
