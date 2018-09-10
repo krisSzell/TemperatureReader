@@ -1,0 +1,23 @@
+.app {
+    .top-navigation {
+        .header-text {
+            line-height: 60px;
+
+            .logo {
+                width: 60px;
+                height: 60px;
+                margin-right: 20px;
+            }
+        }
+    }
+    .main-content {
+        padding-top: 12px;
+    }
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        .refresh-bar {
+            display: flex;
+        }
+    }
+}

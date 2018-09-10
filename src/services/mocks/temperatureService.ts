@@ -2,6 +2,7 @@ import * as moment from "moment";
 
 import { ITemperatureService } from "../interfaces";
 import ITemperature from "./../../models/temperature";
+import { generateData } from "./temperatureDataSet";
 
 const getNowMoment = () => moment();
 
@@ -18,7 +19,7 @@ const defaultOptions: IOptions = {
     resultsCount: 100
 };
 
-export default class TemperatureService implements ITemperatureService {
+class TemperatureService implements ITemperatureService {
     public getLatest(resultsCount: number): ITemperature[] {
         return this.get({ ...defaultOptions, resultsCount });
     }
@@ -31,7 +32,13 @@ export default class TemperatureService implements ITemperatureService {
         return this.get({ ...defaultOptions, fromDate, toDate });
     }
 
+    public getAll(): any {
+        return generateData();
+    }
+
     private get(options: IOptions): ITemperature[] {
         return [];
     }
 }
+
+export default new TemperatureService();

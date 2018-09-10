@@ -1,9 +1,11 @@
 import * as moment from "moment";
+import axios from "axios";
 
 import { ITemperatureService } from "./interfaces";
 import ITemperature from "./../models/temperature";
 
 const getNowMoment = () => moment();
+const apiUrl = "https://rfainski.azurewebsites.net/api/ds18b20";
 
 interface IOptions {
     resultsCount: number;
@@ -18,7 +20,7 @@ const defaultOptions: IOptions = {
     resultsCount: 100
 };
 
-export default class TemperatureService implements ITemperatureService {
+class TemperatureService implements ITemperatureService {
     public getLatest(resultsCount: number): ITemperature[] {
         return this.get({ ...defaultOptions, resultsCount });
     }
@@ -31,7 +33,19 @@ export default class TemperatureService implements ITemperatureService {
         return this.get({ ...defaultOptions, fromDate, toDate });
     }
 
+    public getAll(): any {
+        return axios({
+            method: "GET",
+            url: apiUrl,
+            responseType: "json"
+        }).then(res => {
+            return res.data;
+        });
+    }
+
     private get(options: IOptions): ITemperature[] {
         return [];
     }
 }
+
+export default new TemperatureService();

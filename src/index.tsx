@@ -1,13 +1,15 @@
 import * as React from "react";
-import {render} from "react-dom";
-import {AppContainer} from "react-hot-loader";
+import { render } from "react-dom";
+import { AppContainer } from "react-hot-loader";
 import App from "./components/App";
+import "bootstrap";
+import "./globalStyles/styles.scss";
 
 const rootEl = document.getElementById("root");
 
 render(
     <AppContainer>
-        <App/>
+        <App />
     </AppContainer>,
     rootEl
 );
@@ -21,7 +23,7 @@ if (module.hot) {
 
         render(
             <AppContainer>
-                <NewApp/>
+                <NewApp />
             </AppContainer>,
             rootEl
         );

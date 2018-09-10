@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "npm run clean-dist && webpack -p --config=configs/webpack/prod.js",
+    "build:Dev": "npm run clean-dist && webpack -d --config=configs/webpack/dev.js",
     "clean-dist": "rm -f -r -d dist",
     "lint": "npm run lint:ts && npm run lint:sass",
     "lint:ts": "tslint './src/**/*.ts*' --format stylish --force",
@@ -56,6 +57,12 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "moment": "^2.22.2"
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.3",
+    "chart.js": "^2.7.2",
+    "jquery": "^3.3.1",
+    "moment": "^2.22.2",
+    "popper.js": "^1.14.4",
+    "react-chartjs-2": "^2.7.4"
   }
 }
