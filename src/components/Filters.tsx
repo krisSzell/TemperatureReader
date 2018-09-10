@@ -45,9 +45,9 @@ export default class Filters extends React.Component<IProps> {
                         <input
                             value={intervalThreshold}
                             type="range"
-                            min="5000"
+                            min="1000"
                             max="60000"
-                            step="5000"
+                            step="1000"
                             onChange={onIntervalThresholdChange}
                         />
                         <span>{intervalThreshold / 1000} s</span>

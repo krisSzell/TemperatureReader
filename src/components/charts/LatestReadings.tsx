@@ -25,6 +25,7 @@ interface IState {
     filters: IFilters;
     editingFilters: boolean;
     chartData: any;
+    isLoading: boolean;
 }
 
 export default class LatestReadings extends React.Component<IProps, IState> {
@@ -43,18 +44,30 @@ export default class LatestReadings extends React.Component<IProps, IState> {
                     }
                 ]
             }
-        ]
+        ],
+        isLoading: true
     };
 
-    public componentWillReceiveProps() {
+    public componentWillReceiveProps(nextProps: IProps) {
+        if (nextProps.data.length === 0) {
+            return;
+        }
+
         this.setState({
             updated: moment().toDate(),
-            chartData: this.mapDataToChartJs()
+            chartData: this.mapDataToChartJs(nextProps.data),
+            isLoading: false
         });
     }
 
     public render() {
-        const { updated, filters, editingFilters, chartData } = this.state;
+        const {
+            updated,
+            filters,
+            editingFilters,
+            chartData,
+            isLoading
+        } = this.state;
         const {
             autoRefresh,
             onAutoRefreshToggle,
@@ -87,17 +100,21 @@ export default class LatestReadings extends React.Component<IProps, IState> {
                     </div>
                 </div>
                 <div className="card-body">
-                    <Line data={chartData} legend={{ display: false }} />
+                    {isLoading ? (
+                        <div>loading</div>
+                    ) : (
+                        <Line data={chartData} legend={{ display: false }} />
+                    )}
                 </div>
                 <div className="card-footer small text-muted">
-                    Updated {moment(updated).format("L LT")}
+                    Updated {moment(updated).format("DD/mm/YYYY hh:mm:ss")}
                 </div>
             </div>
         );
     }
 
-    private mapDataToChartJs = () => {
-        const data = this.props.data
+    private mapDataToChartJs = data => {
+        const filteredData = data
             .sort((reading1, reading2) => {
                 if (reading1.Time > reading2.Time) return -1;
                 if (reading1.Time < reading2.Time) return 1;
@@ -107,12 +124,12 @@ export default class LatestReadings extends React.Component<IProps, IState> {
             .reverse();
 
         return {
-            labels: mapToChartJsLabels(data),
+            labels: mapToChartJsLabels(filteredData),
             datasets: [
                 {
                     backgroundColor: "rgb(255, 99, 132)",
                     borderColor: "rgb(255, 99, 132)",
-                    data: mapToChartJsData(data)
+                    data: mapToChartJsData(filteredData)
                 }
             ]
         };
@@ -130,11 +147,8 @@ export default class LatestReadings extends React.Component<IProps, IState> {
             return;
         }
 
-        this.setState(
-            prevState => ({
-                filters: { ...prevState.filters, latest }
-            }),
-            () => this.setState({ chartData: this.mapDataToChartJs() })
-        );
+        this.setState(prevState => ({
+            filters: { ...prevState.filters, latest }
+        }));
     }
 }

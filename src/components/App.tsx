@@ -90,6 +90,18 @@ export default class App extends React.Component<{}, IAppState> {
     private handleIntervalThresholdChange = (event: any) => {
         const intervalThreshold = event.target.value;
 
+        if (this.state.autoRefresh) {
+            clearInterval(this.state.refreshIntervalId);
+
+            const refreshIntervalId = setInterval(
+                this.fetchData,
+                intervalThreshold
+            );
+
+            this.setState({ intervalThreshold, refreshIntervalId });
+            return;
+        }
+
         this.setState({ intervalThreshold });
     }
 }
